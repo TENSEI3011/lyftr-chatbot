@@ -8,7 +8,7 @@ React (Vite) frontend · FastAPI backend · LiteLLM gateway · SQLite storage.
 - Backend:  https://lyftr-chat-backend-i2gc.onrender.com (`/health`, `/chat`, `/sessions/{id}/messages`)
   - Health: https://lyftr-chat-backend-i2gc.onrender.com/health
   - Free Render instance: the first request after ~15 min idle can take ~30 s to wake up.
-- Demo video: `<link>`  <!-- TODO -->
+- Demo video: _link added in the submission form_
 
 ## 2. Run locally
 
@@ -123,8 +123,9 @@ session isolation, 404, all 422 cases, failover on 429/500/502/503, 503 not stor
 
 ## 5. Setup Used
 
-- Editor: VS Code  <!-- TODO: adjust -->
-- AI tools: Claude Code
+- Editor / environment: Claude Code (web, cloud session) — code written, tested (pytest, Playwright) and deployed from it
+- AI tools: Claude Code (Anthropic) for implementation, testing and deployment debugging
+- Deployment: Render (backend, Docker), Vercel (frontend), Groq (`groq/openai/gpt-oss-20b`) with 2 API keys
 
 ## 6. Bonus features
 
@@ -134,11 +135,13 @@ session isolation, 404, all 422 cases, failover on 429/500/502/503, 503 not stor
 - UI field for `X-Simulate-Failure`, key id and fallback count shown per reply, "New chat" button.
 - Non-root backend container with a Docker `HEALTHCHECK`; `render.yaml` blueprint for one-click backend deploy.
 - `MOCK_LLM` mode for keyless local testing and CI.
+- `/health` also reports the active `model` and `last_provider_error` (keys redacted) — this is how a retired
+  Groq model was diagnosed in production without shell access.
 
 ## Deploy notes
 
 - **Backend (Render):** New → Blueprint → this repo (uses `render.yaml`, Docker, disk at `/data`), or a Docker
   web service with root dir `backend`. Set `LLM_API_KEYS`, `ALLOWED_ORIGINS=https://<frontend-domain>`,
-  `ENABLE_FAILURE_SIMULATION=true`. (On the free plan without a disk, use `DATABASE_URL=sqlite:////tmp/app.db`.)
+  `ENABLE_FAILURE_SIMULATION=true`. The deployed instance uses the free plan, which has no persistent disk: history survives app restarts within an instance but not a redeploy. Locally, `make up` keeps it in the named `/data` volume.
 - **Frontend (Vercel/Netlify):** root dir `frontend`, build `npm run build`, output `dist`,
   env `VITE_API_URL=https://<backend-domain>`.

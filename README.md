@@ -4,8 +4,10 @@ React (Vite) frontend · FastAPI backend · LiteLLM gateway · SQLite storage.
 
 ## 1. Live URLs
 
-- Frontend: `https://<your-frontend>.vercel.app`  <!-- TODO: fill in after deploy -->
-- Backend:  `https://<your-backend>.onrender.com` (`/health`, `/chat`, `/sessions/{id}/messages`)  <!-- TODO -->
+- Frontend: https://lyftr-chatbot-psi.vercel.app
+- Backend:  https://lyftr-chat-backend-i2gc.onrender.com (`/health`, `/chat`, `/sessions/{id}/messages`)
+  - Health: https://lyftr-chat-backend-i2gc.onrender.com/health
+  - Free Render instance: the first request after ~15 min idle can take ~30 s to wake up.
 - Demo video: `<link>`  <!-- TODO -->
 
 ## 2. Run locally
@@ -94,7 +96,7 @@ VITE_API_URL=http://localhost:8000 npm run dev   # http://localhost:3000
 ## 4. Verification
 
 ```bash
-B=http://localhost:8000      # or the deployed backend URL
+B=https://lyftr-chat-backend-i2gc.onrender.com   # or http://localhost:8000
 curl $B/health
 # live call, then cache hit (new session, same first message)
 curl -s -XPOST $B/chat -H 'content-type: application/json' -d '{"session_id":"s-a","message":"What is the capital of France?"}'

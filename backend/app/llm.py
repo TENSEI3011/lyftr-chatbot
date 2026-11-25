@@ -88,6 +88,7 @@ class LLMGateway:
             (f"key_{i}", key) for i, key in enumerate(settings.llm_api_keys, start=1)
         ]
         self.cache_enabled = self._enable_cache()
+        self.last_error: str | None = None  # redacted summary of the latest real provider failure
 
     def _enable_cache(self) -> bool:
         try:
@@ -132,6 +133,8 @@ class LLMGateway:
                 detail = str(exc)
                 for _, secret in self.keys:  # never log a raw key
                     detail = detail.replace(secret, "***")
+                if key_id not in simulate:
+                    self.last_error = f"{key_id}: {type(exc).__name__} status={getattr(exc, 'status_code', '')} {detail[:200]}"
                 log.warning("key %s failed for model %s (%s, status=%s): %s", key_id, self.model,
                             type(exc).__name__, getattr(exc, "status_code", ""), detail[:300])
                 continue

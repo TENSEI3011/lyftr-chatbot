@@ -8,7 +8,8 @@ def sid():
 def test_health(client):
     r = client.get("/health")
     assert r.status_code == 200
-    assert r.json() == {"status": "ok", "keys_configured": 2, "cache_enabled": True}
+    body = r.json()
+    assert body["status"] == "ok" and body["keys_configured"] == 2 and body["cache_enabled"] is True
 
 
 def test_chat_live_then_cache(client):

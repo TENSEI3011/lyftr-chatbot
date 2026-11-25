@@ -75,7 +75,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         db_ok = app.state.db.ping()
         keys = len(app.state.llm.keys)
         body = {"status": "ok" if db_ok and keys > 0 else "degraded",
-                "keys_configured": keys, "cache_enabled": app.state.llm.cache_enabled}
+                "keys_configured": keys, "cache_enabled": app.state.llm.cache_enabled,
+                "model": app.state.llm.model, "last_provider_error": app.state.llm.last_error}
         return JSONResponse(status_code=200 if body["status"] == "ok" else 503, content=body)
 
     @app.post("/chat")

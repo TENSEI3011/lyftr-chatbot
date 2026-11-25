@@ -129,8 +129,11 @@ class LLMGateway:
                     raise ValueError("empty completion")
             except Exception as exc:  # 429 / quota / 5xx / timeouts / bad key -> next key
                 failures += 1
-                log.warning("key %s failed (%s): %s", key_id, type(exc).__name__,
-                            getattr(exc, "status_code", ""))
+                detail = str(exc)
+                for _, secret in self.keys:  # never log a raw key
+                    detail = detail.replace(secret, "***")
+                log.warning("key %s failed for model %s (%s, status=%s): %s", key_id, self.model,
+                            type(exc).__name__, getattr(exc, "status_code", ""), detail[:300])
                 continue
 
             latency_ms = int(round((time.perf_counter() - start) * 1000))
